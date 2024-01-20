@@ -1,12 +1,16 @@
+package advent;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.List;
+
+import static java.lang.Character.getNumericValue;
+import static java.lang.Character.isDigit;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.lang.Character.isDigit;
-import static java.lang.Character.getNumericValue;
 
-class Dec03a {
+class Dec03b {
 //	final static String filename = "dec03_demo.txt";
 	final static String filename = "dec03.txt";
 
@@ -15,7 +19,7 @@ class Dec03a {
 	int height = 0;
 
     public static void main( String []args ) throws Exception {
-    	Dec03a theApp = new Dec03a();
+    	Dec03b theApp = new Dec03b();
     	theApp.readFileToMatrix();
     	theApp.examineMatrix();
     }
@@ -25,38 +29,37 @@ class Dec03a {
     	int sum = 0;
     	for (int y = 0; y < height; y++) {
     		for (int x = 0; x < width; x++) {
-    			if (isSymbol(x, y)) {
-    				sum += searchForParts(x, y);
+    			if (isGear(x, y)) {
+    				sum += searchForRatios(x, y);
     			}
     		}
     	}
     	System.out.println(String.format("The sum is %d", sum));
     }
 
-    boolean isSymbol(final int x, final int y) {
-    	char examinedChar = theInput[y][x];
-    	//System.out.printf("%c", examinedChar);
-    	if (isDigit(examinedChar))
-    		return false;
-    	if (examinedChar == '.') 
-    		return false;
-    	System.out.printf("Symbol is %c\n", examinedChar);
-    	return true;
+    boolean isGear(final int x, final int y) {
+    	return  theInput[y][x] == '*';
     }
 
-    // we have a symbol, now look around for digits.
-    int searchForParts(final int xPos, final int yPos) {
+    // we have a gear, now look around for numbers.
+	// if we have two, multiply them, and return that.
+    int searchForRatios(final int xPos, final int yPos) {
+		List<Integer> theRatios = new ArrayList<>();
     	int sum = 0;
-    	System.out.printf("checking [%d %d %d] [%d %d %d]\n", max(0, yPos-1), yPos, min(yPos+1, height), max(0, xPos-1), xPos,  min(xPos+1, width)); 
+    	//System.out.printf("checking [%d %d %d] [%d %d %d]\n", max(0, yPos-1), yPos, min(yPos+1, height), max(0, xPos-1), xPos,  min(xPos+1, width));
     	for (int y = max(0, yPos-1); y <= min(yPos+1, height); y++) {
 	    	for (int x = max(0, xPos-1); x <= min(xPos+1, width); x++) {
 	    		System.out.printf("checking at %d %d\n", x, y);
 	    		if (isDigit(theInput[y][x])) {
-	    			sum += determineValue(x, y);
+					theRatios.add(determineValue(x, y));
 	    		}
 	    	}
 	    }
-    	return sum;
+		if (theRatios.size() == 2) {
+			return theRatios.get(0) * theRatios.get(1);
+		} else {
+			return 0;
+		}
     }
 
     // move to the left through the matrix, until we hit a boundary, OR we stop hitting digits.

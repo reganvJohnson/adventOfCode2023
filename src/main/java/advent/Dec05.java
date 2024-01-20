@@ -1,3 +1,5 @@
+package advent;
+
 import java.math.BigInteger;
 import java.io.BufferedReader;
 import java.io.FileReader;
